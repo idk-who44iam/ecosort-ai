@@ -21,8 +21,10 @@ COPY app.py classifier.py ./
 COPY templates ./templates
 COPY static ./static
 COPY start.sh ./start.sh
-RUN chmod +x ./start.sh
+
+RUN sed -i 's/\r$//' ./start.sh \
+    && chmod +x ./start.sh
 
 EXPOSE 8080
 
-CMD ["/app/start.sh"]
+CMD ["bash", "/app/start.sh"]
