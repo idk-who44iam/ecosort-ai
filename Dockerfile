@@ -1,3 +1,4 @@
+
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -7,7 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     ECOSORT_INSTANCE_PATH=/data/instance
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends bash ca-certificates curl \
+    && apt-get install -y --no-install-recommends bash ca-certificates curl zstd \
     && rm -rf /var/lib/apt/lists/* \
     && bash -o pipefail -c "curl -fsSL https://ollama.com/install.sh | sh"
 
