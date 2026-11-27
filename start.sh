@@ -1,3 +1,4 @@
+
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
@@ -28,9 +29,11 @@ for attempt in $(seq 1 60); do
     if curl --silent --fail http://127.0.0.1:11434/api/version >/dev/null; then
         break
     fi
+
     if ! kill -0 "$OLLAMA_PID" 2>/dev/null; then
         wait "$OLLAMA_PID"
     fi
+
     sleep 1
 done
 
@@ -64,4 +67,6 @@ if wait -n "$OLLAMA_PID" "$WEB_PID"; then
 else
     status=$?
 fi
+
 exit "$status"
+
