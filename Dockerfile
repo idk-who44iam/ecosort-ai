@@ -23,6 +23,10 @@ COPY static ./static
 COPY start.sh ./start.sh
 
 RUN sed -i 's/\r$//' ./start.sh \
+    && echo "===== VERIFY START.SH =====" \
+    && file /app/start.sh \
+    && head -n 1 /app/start.sh | od -An -tx1 \
+    && echo "===== END VERIFICATION =====" \
     && chmod +x ./start.sh
 
 EXPOSE 8080
