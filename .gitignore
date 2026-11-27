@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# App data
+instance/
+model/classifier.joblib
+
+# Large downloadable dataset (TrashNet) - keep out of version control
+training/trashnet/
+
+# OS
+.DS_Store
+Thumbs.db
