@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>EcoSort AI | About</title>
+	<meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+	<nav>
+		<div class="logo">
+			♻ EcoSort AI
+		</div>
+
+		<div class="menu">
+			<a href="{{ url_for('home') }}">Home</a>
+			<a href="{{ url_for('about') }}">About</a>
+			{% if current_user %}
+				<a href="{{ url_for('logout') }}">Logout ({{ current_user }})</a>
+			{% else %}
+				<a href="{{ url_for('login') }}">Login</a>
+				<a href="{{ url_for('register') }}">Register</a>
+			{% endif %}
+		</div>
+	</nav>
+
+	<section class="main about-page">
+		<h1>About EcoSort AI</h1>
+		<p>
+			EcoSort AI helps you recycle correctly. Upload a photo of your item
+			and the app uses machine learning to sort it into a material
+			category &mdash; paper, plastic, glass, metal, cardboard or general
+			trash &mdash; then tells you exactly how to recycle it.
+		</p>
+		<p>
+			SmolVLM2 2.2B automatically looks at your photo through Ollama,
+			identifies the material and explains its decision. If Ollama or the
+			model is unavailable, the app displays an error instead of
+			substituting a different classifier.
+		</p>
+		<p>
+			Create a free account, then start sorting!
+		</p>
+		<div class="button-group">
+			<a href="{{ url_for('register') }}" class="btn login-btn">Get started</a>
+		</div>
+	</section>
+</body>
+</html>

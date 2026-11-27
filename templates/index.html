@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>EcoSort AI</title>
+	<meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+	<nav>
+		<div class="logo">
+			♻ EcoSort AI
+		</div>
+
+		<div class="menu">
+			<a href="{{ url_for('home') }}">Home</a>
+			<a href="{{ url_for('about') }}">About</a>
+			{% if current_user %}
+				<a href="{{ url_for('logout') }}">Logout ({{ current_user }})</a>
+			{% else %}
+				<a href="{{ url_for('login') }}">Login</a>
+				<a href="{{ url_for('register') }}">Register</a>
+			{% endif %}
+		</div>
+	</nav>
+
+	<section class="main">
+		<h1>Welcome to EcoSort AI</h1>
+		<h2>Recycle Smarter with EcoSort AI</h2>
+		<p>Upload an image and let AI tell you how to recycle it correctly.</p>
+
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% for category, message in messages %}
+				<div class="flash flash-{{ category }}">{{ message }}</div>
+			{% endfor %}
+		{% endwith %}
+
+		{% if current_user %}
+			<div class="upload-box">
+				<h3>Sort your item with AI</h3>
+				<form action="{{ url_for('classify') }}" method="post" enctype="multipart/form-data" id="sort-form">
+					<div class="model-info">
+						<span class="model-name">{{ model.label }}</span>
+						<span class="model-params">{{ model.params }}</span>
+						<span class="model-status" data-model-tag="{{ model.tag }}">checking…</span>
+					</div>
+
+					<div class="upload-step">
+						<p class="step-label">Upload a photo of your item</p>
+						<input type="file" name="image" id="image-input"
+						       accept=".jpg,.jpeg,.png,.webp,.bmp,.gif,.avif,image/jpeg,image/png,image/webp,image/bmp,image/gif,image/avif" required>
+						<button type="submit" id="sort-btn" class="btn login-btn">Sort it with AI</button>
+						<p class="hint" id="upload-hint">SmolVLM2 2.2B is used automatically. Check the result; AI can make mistakes.</p>
+					</div>
+				</form>
+			</div>
+		{% else %}
+			<div class="button-group">
+				<a href="{{ url_for('login') }}" class="btn login-btn">Login</a>
+				<a href="{{ url_for('register') }}" class="btn register-btn">Register an Account</a>
+			</div>
+		{% endif %}
+
+		{% if result %}
+			<div class="result-card">
+				<div class="result-icon">{{ result.icon }}</div>
+				<h3>{{ result.label }}</h3>
+				<div class="verdict verdict-{{ result.verdict_class }}" role="status">
+					{{ result.verdict_label }}
+				</div>
+				<p class="verdict-guidance">{{ result.verdict_guidance }}</p>
+				{% if result.source == "vision" %}
+					<span class="source-badge">✨ {{ result.model_label }}</span>
+					<span class="model-tag">{{ result.model_tag }}</span>
+				{% endif %}
+				{% if result.warning %}
+					<div class="flash flash-warning">{{ result.warning }}</div>
+				{% endif %}
+				<p>{{ result.advice }}</p>
+			</div>
+		{% endif %}
+	</section>
+
+	<script>
+		(function () {
+			var form = document.getElementById("sort-form");
+			if (!form) return;
+			var badge = form.querySelector("[data-model-tag]");
+			var button = document.getElementById("sort-btn");
+			var hint = document.getElementById("upload-hint");
+
+			form.addEventListener("submit", function (event) {
+				event.preventDefault();
+				button.disabled = true;
+				button.textContent = "Analyzing image...";
+				hint.textContent = "Analyzing the image. Please keep this page open.";
+				hint.classList.add("hint-ready");
+
+				fetch(form.action, {
+					method: "POST",
+					body: new FormData(form),
+					credentials: "same-origin"
+				})
+					.then(function (response) {
+						if (!response.ok) throw new Error("The image could not be analyzed.");
+						return response.text();
+					})
+					.then(function (html) {
+						document.open();
+						document.write(html);
+						document.close();
+					})
+					.catch(function () {
+						button.disabled = false;
+						button.textContent = "Sort it with AI";
+						hint.textContent = "Analysis failed. Please try again.";
+					});
+			});
+
+			// Show whether the fixed model is installed on the server.
+			fetch("{{ url_for('api_models') }}")
+				.then(function (res) {
+					if (!res.ok) throw new Error("Status request failed");
+					return res.json();
+				})
+				.then(function (data) {
+					var model = (data.models || []).filter(function (item) {
+						return item.tag === badge.dataset.modelTag;
+					})[0];
+					if (!data.server_online) {
+						badge.textContent = "server offline";
+						badge.className = "model-status status-off";
+					} else if (model && model.installed) {
+						badge.textContent = "installed";
+						badge.className = "model-status status-on";
+					} else {
+						badge.textContent = "not installed";
+						badge.className = "model-status status-off";
+					}
+				})
+				.catch(function () {
+					badge.textContent = "status unavailable";
+					badge.className = "model-status status-off";
+				});
+		})();
+	</script>
+</body>
+</html>
