@@ -7,7 +7,7 @@ export OLLAMA_MODELS="${OLLAMA_MODELS:-$DATA_DIR/ollama}"
 export ECOSORT_INSTANCE_PATH="${ECOSORT_INSTANCE_PATH:-$DATA_DIR/instance}"
 export OLLAMA_HOST="${OLLAMA_HOST:-127.0.0.1:11434}"
 export PORT="${PORT:-8080}"
-MODEL_TAG="ahmadwaqar/smolvlm2-2.2b-instruct"
+MODEL_TAG="ahmadwaqar/smolvlm2-500m-video"
 
 mkdir -p "$OLLAMA_MODELS" "$ECOSORT_INSTANCE_PATH"
 

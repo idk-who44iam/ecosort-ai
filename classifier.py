@@ -1,7 +1,7 @@
 """
 EcoSort AI - image classifier.
 
-Images are classified by SmolVLM2-2.2B through Ollama. If Ollama or the model
+Images are classified by SmolVLM2-500M through Ollama. If Ollama or the model
 is unavailable the call raises an error instead of substituting a different
 classifier.
 
@@ -131,10 +131,10 @@ BACKEND = os.environ.get("CLASSIFIER_BACKEND", "auto").lower()
 # --------------------------------------------------------------------------
 BUILTIN_MODELS = [
     {
-        "id": "smolvlm2-2.2b",
-        "tag": "ahmadwaqar/smolvlm2-2.2b-instruct",
-        "label": "SmolVLM2 2.2B",
-        "params": "2.2B",
+        "id": "smolvlm2-500m",
+        "tag": "ahmadwaqar/smolvlm2-500m-video",
+        "label": "SmolVLM2 500M",
+        "params": "500M",
         "description": "The app's fixed vision model.",
         "max_side": 512,
         "timeout": 180,
